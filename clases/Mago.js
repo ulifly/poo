@@ -1,17 +1,11 @@
 import Personaje from "./Personaje.js";
 
 class Mago extends Personaje {
-    constructor(name, life, spell){
-        super(name, life)
-
-        this.hechizo = spell;
+    
+    constructor(nombre){
+        super(nombre, 80, 50);
     }
 
-    atacar() {
-        console.log(
-            `${this.nombre} ataca con su hechizo ${this.hechizo}`
-        )
-    }
 } 
 
 export default Mago;
