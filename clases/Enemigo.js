@@ -1,4 +1,4 @@
-import Personaje from "./Personaje";
+import Personaje from "./Personaje.js";
 
 class Enemigo extends Personaje {
     constructor(nombre, vida, ataque) {

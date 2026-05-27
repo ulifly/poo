@@ -1,0 +1,25 @@
+/* Reset  */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #0f0f23;
+    color: #e0e0e0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#pantalla-creacion {
+    background: #1a1a3e;
+    padding: 2rem;
+    border-radius: 16px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(100, 100, 250, 0.1);
+}

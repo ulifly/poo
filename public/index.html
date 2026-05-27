@@ -3,10 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>mi primer RPG</title>
 </head>
 <body>
-    <h1> RPG </h1>
+    <!-- Pantalla de creación de personaje -->
+     <div id="pantalla-creacion" >  
+        <h1>⚔️ Mini RPG</h1>
+        <h2>Crear Personaje</h2>
+
+        <form id="form-creacion">
+            <label for ="nombre">Nombre:</label>
+            <input type="text" id="nombre" placeholder="Ingresa nombre de tu personaje" required autocomplete="off">
+
+            <select id="clase" name="clase" required>    
+                <option value="">Selecciona una clase</option>
+                <option value="guerrero">🛡️ Guerrero</option>
+                <option value="mago">🧙‍♂️  Mago</option>
+                <option value="arquero">🏹 Arquero</option>
+            </select>
+
+            <button type="submit">Crear Personaje</button>
+        </form>
+        <div class="clase-info">
+            💡 <span>Guerrero</span> Mucha vida, daño moderado <br>
+            💡 <span>Mago</span> Poca vida, mucho daño <br>
+            💡 <span>Arquero</span> Equilibrio entre vida y daño
+        </div>
+
+        <!--  Päntalla de combate -->
+          <div id="pantalla-combate" class="oculto">
+            <div id="resultado"></div>
+            <div class="combatientes"> 
+                <h3 id="personaje-nombre">-</h3>
+                <div class="stat">⚔️ ATQ: <span id="personaje-atq">0</span>0</div>
+                <div id="barra-vida">        
+                    <div id="personaje-vida-bar"></div>
+                </div>
+
+            </div>
+                
+
+          </div>
+
+     </div>
+
+     
+
+
+
+
+
     <script src="app.js"></script>
 </body>
 </html>
+
