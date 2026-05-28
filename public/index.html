@@ -7,47 +7,60 @@
     <title>mi primer RPG</title>
 </head>
 <body>
-    <!-- Pantalla de creación de personaje -->
-     <div id="pantalla-creacion" >  
-        <h1>⚔️ Mini RPG</h1>
-        <h2>Crear Personaje</h2>
-
-        <form id="form-creacion">
-            <label for ="nombre">Nombre:</label>
-            <input type="text" id="nombre" placeholder="Ingresa nombre de tu personaje" required autocomplete="off">
-
-            <select id="clase" name="clase" required>    
-                <option value="">Selecciona una clase</option>
-                <option value="guerrero">🛡️ Guerrero</option>
-                <option value="mago">🧙‍♂️  Mago</option>
-                <option value="arquero">🏹 Arquero</option>
-            </select>
-
-            <button type="submit">Crear Personaje</button>
-        </form>
-        <div class="clase-info">
-            💡 <span>Guerrero</span> Mucha vida, daño moderado <br>
-            💡 <span>Mago</span> Poca vida, mucho daño <br>
-            💡 <span>Arquero</span> Equilibrio entre vida y daño
-        </div>
-
-        <!--  Päntalla de combate -->
-          <div id="pantalla-combate" class="oculto">
-            <div id="resultado"></div>
-            <div class="combatientes"> 
-                <h3 id="personaje-nombre">-</h3>
-                <div class="stat">⚔️ ATQ: <span id="personaje-atq">0</span>0</div>
-                <div id="barra-vida">        
-                    <div id="personaje-vida-bar"></div>
+    <div id="app"> 
+        <!-- Pantalla de creación de personaje -->
+         <div id="creacion" >  
+            <h1>⚔️ Mini RPG</h1>
+            <p>Crear Personaje</p>
+    
+            <form id="form-crear">
+                <input type="text" id="input-nombre" placeholder="Ingresa nombre de tu personaje" required>
+                <select id="select-clase" name="clase" required>    
+                    <option value="">Selecciona una clase</option>
+                    <option value="guerrero">🛡️ Guerrero</option>
+                    <option value="mago">🧙‍♂️  Mago</option>
+                    <option value="arquero">🏹 Arquero</option>
+                </select>
+                <button type="submit">Crear Personaje</button>
+            </form>
+    
+            <!--  Päntalla de combate -->
+              <div id="combate">
+                <div class="entidad" id="panel-jugador">
+                    <h2><span id="nombre-jugador"></span></h2>
+                    <p>ATQ: <span id="jugador-atq"></span></p>
+                    <div class="barra-vida">
+                        <div class="relleno" id="jugador-barra"></div>
+                        <span id="jugador-vida-texto"></span>
+                    </div>
                 </div>
 
-            </div>
-                
+                <div>
+                    <h2><span class="entidad" id="panel-enemigo"></span></h2>
+                    <p>ATQ: <span id="enemigo-atq"></span></p>
+                    <div class="barra-vida">
+                        <div class="relleno" id="enemigo-barra"></div>
+                        <span id="enemigo-vida-texto"></span>
+                    </div>
+                </div>
 
-          </div>
+                <div id="log"> </div>
 
-     </div>
+                <div class="acciones" id="acciones">
+                    <button id="btn-atacar">⚔️ Atacar</button>
+                    <button id="btn-defender">🛡️ Defender</button>
+                </div>
 
+                <div id="resultado">
+                    <h2></h2>
+                    <button id="btn-reiniciar">Reiniciar Juego</button>
+                </div>
+
+              </div>
+        </div>
+    </div>
+ 
+         
      
 
 

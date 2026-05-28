@@ -34,104 +34,97 @@ app.post('/crear-personaje', (req, res) => {
 
     jugadores.push(personaje);
     res.json({ mensaje: `Personaje creado exitosamente`, personaje});
+    console.log(`Personaje creado: ${JSON.stringify(personaje)}`);
 });
 
-function serializarEstado() {
+function serializarEstado() { // esta funcion se encarga de convertir el estado del combate formato que se pueda enviar al cliente, eliminando metodos y propiedades innecesarias
+    if(!combate) return null;
     return {
-        personaje: {
-            nombre: juego.personaje.nombre,
-            vida: juego.personaje.vida,
-            vidaMaxima: juego.personaje.vidaMaxima,
-            ataque: juego.personaje.ataque,
-            defendiendo: juego.personaje.defendiendo
+        jugador: {
+            nombre: combate.jugador.nombre,
+            vida: combate.jugador.vida,
+            vidaMaxima: combate.jugador.vidaMaxima,
+            ataque: combate.jugador.ataque,
+            defendiendo: combate.jugador.defendiendo
         }, 
         enemigo: {
-            nombre: juego.enemigo.nombre,
-            vida: juego.enemigo.vida,
-            vidaMaxima: juego.enemigo.vidaMaxima,
-            ataque: juego.enemigo.ataque
+            nombre: combate.enemigo.nombre,
+            vida: combate.enemigo.vida,
+            vidaMaxima: combate.enemigo.vidaMaxima,
+            ataque: combate.enemigo.ataque
         },
-        terminado: juego.terminado
     }
 }
 
-
 app.post ('/iniciar-combate', (req, res) => {
-    const { nombre, clase } = req.body;
+    const jugador = jugadores[jugadores.length - 1]
 
-    // crear el personaje del jugador segun la clase seleccionada
-    let personaje;
-
-    switch (clase) {
-        case "guerrero":
-            personaje = new Guerrero(nombre);
-            break;
-        case "mago":
-            personaje = new Mago(nombre);
-            break;
-        case "arquero":
-            personaje = new Arquero(nombre);
-            break;4
-        default:
-            return res.status(400).json({ error: "Clase no válida" });
+    if(!jugador) {
+        return res.status(400).json({ error: "No hay personajes disponibles para iniciar el combate" });
     }
+    //jugador.vidaMaxima = jugador.vida; // guardamos la vida maxima  para generar la barra de vida
+    jugador.defendiendo = false;
 
-    // guardamos la vida maxima  para generar la barra de vida
-    
-    personaje.vidaMaxima = personaje.vida;
+    const enemigo = new Dragon()     // Crear un enemigo 
+   
+    combate = { jugador, enemigo, turno: "jugador", mensajes: [] }; //inicializar el estado del combate
 
-    // Crear un enemigo 
+    combate.jugador.vidaMaxima = combate.jugador.vida; // guardamos la vida maxima  para generar la barra de vida del jugador
+    combate.enemigo.vidaMaxima = combate.enemigo.vida; // guardamos la vida maxima  para generar la barra de vida del enemigo
 
-    const enemigo = new Dragon()
-    enemigo.vidaMaxima = enemigo.vida;
-
-    combate = { personaje, enemigo, terminado:false };
-    
-    res.json(serializarEstado());
+    res.json({
+        mensaje: `¡${jugador.nombre} se enfrenta al ${enemigo.nombre}!`,  // mensaje de bienvenida al combate
+        estado: serializarEstado() // enviamos el estado inicial del combate al cliente
+    }) 
+    console.log(`Combate iniciado entre ${jugador.nombre} y ${enemigo.nombre}`);
 
 });
 
 app.post('/accion', (req, res) => {
-    if (!juego || juego.terminado) {
-        return res.status(400).json({ error: "No hay un combate en curso" });
+    if (!combate) {
+        return res.status(400).json({ error: "⛔ No hay un combate en curso" });
     }
 
     const { accion } = req.body;
+    const {jugador, enemigo} = combate;
     const mensajes = [];
 
     if (accion === "atacar") {
-        mensajes.push(`⚔️ ${juego.personaje.ataque(juego.enemigo)} `);
+        mensajes.push(`⚔️ ${jugador.atacar(enemigo)} `);
+        console.log(`⚔️ ${jugador.nombre} ataca a ${enemigo.nombre} causando ${jugador.ataque} de daño`);
     } else if (accion === "defender") {
-        mensajes.push (`🛡️ ${juego.personaje.defender()} `);
+        mensajes.push (`🛡️ ${jugador.defender()} `);
+        console.log(`Jugador ${jugador.nombre} se defiende`);
     } else {
         return res.status(400).json({ error: "Acción no válida" });
     }
 
-    // revisar el estado del enemigo para ver si murio
-
-    if (juego.enemigo.vida <= 0) {
-        juego.terminado = true;
-        mensajes.push(`🏆 ¡${juego.personaje.nombre} ha vencido al ${juego.enemigo.nombre}!`);
-        return res.json({ ...serializarEstado(), mensajes, resultado: "victoria" });
+    if (enemigo.vida <= 0) {    // revisar el estado del enemigo para ver si murio
+        mensajes.push(`🏆 ¡${jugador.nombre} ha vencido al ${enemigo.nombre}!`);
+        combate = null; // reiniciamos el combate para permitir iniciar uno nuevo
+        return res.json({resultado: "victoria", mensajes, estado: null });
     }
 
-    // turno del enemigo (ataca siempre)
+    // turno del enemigo 
 
-    mensajes.push(`🐉 ${juego.enemigo.atacar(juego.personaje)} `);
+    mensajes.push(`🐉 ${enemigo.atacar(jugador)} `);
+    console.log(`🐉 ${enemigo.nombre} ataca a ${jugador.nombre} causando ${enemigo.ataque} de daño`);
 
-    juego.personaje.terminarTurno(); // el personaje deja de defenderse al final del turno
+    jugador.terminarTurno(); // el personaje deja de defenderse al final del turno
 
-    // revisar el estado del personaje para ver si murio
-    if (juego.personaje.vida <= 0) {
-        juego.terminado = true;
-        mensajes.push(` 💀 ${juego.personaje.nombre} ha sido derrotado por el ${juego.enemigo.nombre}...`);
-        return res.json( { ...serializarEstado(), mensajes, resultado: "derrota" } )
+    if (jugador.vida <= 0) {  // revisar el estado del personaje para ver si murio
+        mensajes.push(`💀 ${jugador.nombre} ha sido derrotado por el ${enemigo.nombre}...`);
+        console.log(`💀 ${jugador.nombre} ha sido derrotado por ${enemigo.nombre}`);
+        return res.json( { resultado: "derrota", mensajes, estado: null } )
     }
 
-    res.json( { ...serializarEstado(), mensajes, resultado: null } );
+    res.json( { 
+        resultado: "continua",
+        mensajes,
+        estado: serializarEstado() // enviamos el estado actualizado del combate al cliente
+     } );
 
 });
-
 
 
 
